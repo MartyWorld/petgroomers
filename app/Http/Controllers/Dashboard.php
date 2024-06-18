@@ -11,13 +11,23 @@ use Illuminate\Support\Facades\Redirect;
 class Dashboard extends Controller
 {
 
+    protected $DOG_RATE_UNDER_2;
+    protected $DOG_RATE_2_TO_5;
+    protected $DOG_RATE_OVER_5;
+    protected $CAT_RATE;
 
+    public function __constructor(){
+        $this->CAT_RATE = 0;
+        $this->DOG_RATE_2_TO_5 = 0;
+        $this->DOG_RATE_UNDER_2 = 0;
+        $this->DOG_RATE_OVER_5 = 0;
+    }
 
     public function index(Request $request){
 
         $data['availableLockers'] = Petlocker::where('petId', '=' ,0)->get()->toArray();
         $data['pricing'] = OnBoardPricing::all();
-        $data['records'] = OnBoardPets::with('locker')->OrderBy('id','DESC')->get()->toArray();
+        $data['records'] = OnBoardPets::with('locker')->orderBy('status','ASC')->OrderBy('id','DESC')->get()->toArray();
         return view('admin.dashboard',$data);
 
     }
@@ -52,10 +62,50 @@ class Dashboard extends Controller
             return redirect()->back()->with('message', $req['petName'].' Added Successfully in Database');
 
         }else{
-            return Redirect::back()->withErrors('Something went wrong Please try agian later');
+            return Redirect::back()->withErrors('Something went wrong Please try again later');
 
         }
 
+    }
+
+    public function getRecords(Request $request){
+
+    }
+
+    public function updateRecords(){
+
+    }
+
+
+
+    public function updateStatus(Request $request){
+        $req = $request->all();
+        if($req['actionType'] == 'checkOut'){
+            Petlocker::where('petId',$req['id'])->update([
+                'petId' => 0,
+                'petName' => null,
+                'petInTime' => null,
+                'petOutTime' => null
+            ]);
+
+            OnBoardPets::where('id',$req['id'])->update([
+               'status'=>'checkOut',
+                'checkOut' => now()
+            ]);
+            return redirect()->back()->with('message','Pet Successfully Checkout from System');
+
+        }elseif ($req['actionType'] == 'checkOut'){
+            Petlocker::where('petId',$req['id'])->update([
+                'petId' => 0,
+                'petName' => null,
+                'petInTime' => null,
+                'petOutTime' => null
+            ]);
+
+            OnBoardPets::where('id',$req['id'])->delet();
+            return redirect()->back()->with('message','Record Deleted Successfully');
+        }
+        return Redirect::back()->withErrors('Something went wrong Please try again later');
     }
 
 }

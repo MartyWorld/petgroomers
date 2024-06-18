@@ -32,7 +32,7 @@
                                 <div class="row" style="width: 100%">
                                     <div class="col-6">
                                         <div class="header-title">
-                                            <h4 class="card-title">Bootstrap Datatables</h4>
+                                            <h4 class="card-title">Pet Records</h4>
                                         </div>
                                     </div>
                                     <div class="col-6">
@@ -53,6 +53,7 @@
                                             <th>check Out</th>
                                             <th>dueAmount</th>
                                             <th>Created_at</th>
+                                            <th>Action</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -65,8 +66,17 @@
                                                 <td>{{$value['checkIn']}}</td>
                                                 <td>{{$value['checkOut']}}</td>
                                                 <td>{{$value['dueAmount']}}</td>
+                                                <td>
+                                                    <span class="badge  {{$value['status'] == 'checkIn' ? 'badge-success' : 'badge-danger'}}">{{$value['status']}}</span>
+                                                </td>
                                                 <td>{{$value['created_at']}}</td>
-
+                                                <td>
+                                                    @if($value['status'] == 'checkIn')
+                                                        <a href="{{route('updateStatus',['actionType'=>'checkOut','id'=>$value['id']])}}" class="btn btn-success btn-sm" style="margin: 2px">Check Out</a><br>
+                                                        <a href="{{route('updateStatus',['actionType'=>'deleted','id'=>$value['id']])}}" class="btn btn-danger btn-sm" style="margin: 2px">Delete</a></td>
+                                                @else
+                                                    <a href="#" class="btn btn-primary btn-sm" style="margin: 2px">N/A</a><br>
+                                                @endif
                                             </tr>
                                         @endforeach
                                         </tbody>

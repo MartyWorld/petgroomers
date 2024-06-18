@@ -21,7 +21,8 @@ class OnBoardPets extends Model
         'description',
         'instructions',
         'paymentStatus',
-        'dueAmount'
+        'dueAmount',
+        'status'
     ];
 
     public function locker(){

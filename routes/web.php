@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
+Route::get('/home', function () {
     return view('website/home');
 })->name('home');
 
@@ -28,7 +28,7 @@ Route::get('/logout', function () {
     return redirect('/');
 });
 
-Route::get('/login', function () {
+Route::get('/', function () {
     return view('auth.login');
 })->name('login');
 
@@ -44,5 +44,8 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'dashboard'], function () {
     });
 //    Route::get('/dashboard', [\App\Http\Controllers\Dashboard::class, 'index'])->name('dashboard');
     Route::post('/store', [\App\Http\Controllers\Dashboard::class, 'addRecords'])->name('addRecords');
+    Route::get('/updateStatus', [\App\Http\Controllers\Dashboard::class, 'updateStatus'])->name('updateStatus');
 });
 require __DIR__.'/auth.php';
+
+
