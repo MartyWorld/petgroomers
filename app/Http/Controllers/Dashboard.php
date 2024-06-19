@@ -27,7 +27,7 @@ class Dashboard extends Controller
 
         $data['availableLockers'] = Petlocker::where('petId', '=' ,0)->get()->toArray();
         $data['pricing'] = OnBoardPricing::all();
-        $data['records'] = OnBoardPets::with('locker')->orderBy('status','ASC')->OrderBy('id','DESC')->get()->toArray();
+        $data['records'] = OnBoardPets::with('locker')->whereIn('status',['checkIn','checkOut'])->orderBy('status','ASC')->OrderBy('id','DESC')->get()->toArray();
         return view('admin.dashboard',$data);
 
     }
