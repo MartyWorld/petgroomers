@@ -27,7 +27,7 @@ class Dashboard extends Controller
 
         $data['availableLockers'] = Petlocker::where('petId', '=' ,0)->get()->toArray();
         $data['pricing'] = OnBoardPricing::all();
-        $data['records'] = OnBoardPets::with('locker')->whereIn('status',['checkIn','checkOut'])->orderBy('status','ASC')->OrderBy('id','DESC')->get()->toArray();
+        $data['records'] = OnBoardPets::with('locker','weight')->whereIn('status',['checkIn','checkOut'])->orderBy('status','ASC')->OrderBy('id','DESC')->get()->toArray();
         return view('admin.dashboard',$data);
 
     }
@@ -94,7 +94,7 @@ class Dashboard extends Controller
             ]);
             return redirect()->back()->with('message','Pet Successfully Checkout from System');
 
-        }elseif ($req['actionType'] == 'checkOut'){
+        }elseif ($req['actionType'] == 'deleted'){
             Petlocker::where('petId',$req['id'])->update([
                 'petId' => 0,
                 'petName' => null,
@@ -102,10 +102,11 @@ class Dashboard extends Controller
                 'petOutTime' => null
             ]);
 
-            OnBoardPets::where('id',$req['id'])->delet();
-            return redirect()->back()->with('message','Record Deleted Successfully');
+            OnBoardPets::where('id',$req['id'])->delete();
+            return redirect()->back()->with('message','Record has been deleted Successfully');
         }
         return Redirect::back()->withErrors('Something went wrong Please try again later');
     }
+
 
 }

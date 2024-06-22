@@ -105,7 +105,7 @@
     <section class="gap">
         <div class="container">
             <div class="row">
-                <div class="offset-3 col-lg-6 " >
+                <div class="offset-lg-3 col-lg-6 col-sm-12 offset-sm-0">
                     <div class="box login">
                         <h3>Log In Your Account</h3>
                         <form method="POST" action="{{ route('login') }}">

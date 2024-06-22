@@ -29,4 +29,8 @@ class OnBoardPets extends Model
         return $this->belongsTo(Petlocker::class, 'lockerId', 'id');
 
     }
+    public function weight(){
+        return $this->belongsTo(OnBoardPricing::class, 'pricingId', 'id');
+
+    }
 }

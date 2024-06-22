@@ -45,31 +45,38 @@
                                     <table id="datatable" class="table  table-striped table-bordered" >
                                         <thead>
                                         <tr>
-                                            <th>Index</th>
                                             <th>PetName</th>
                                             <th>Payment Status</th>
                                             <th>Locker Name</th>
+                                            <th>Weight</th>
                                             <th>check In</th>
                                             <th>check Out</th>
                                             <th>dueAmount</th>
+                                            <th>Description</th>
+                                            <th>Instruction</th>
+                                            <th>Status</th>
                                             <th>Created_at</th>
                                             <th>Action</th>
+{{--                                            <th>Update/Report</th>--}}
                                         </tr>
                                         </thead>
                                         <tbody>
                                         @foreach($records as $value)
                                             <tr>
-                                                <td>{{$value['id']}}</td>
-                                                <td>{{$value['petName']}}</td>
+                                                <td>PT#{{$value['id']}}-{{$value['petName']}}</td>
                                                 <td>{{$value['paymentStatus']}}</td>
                                                 <td>{{$value['locker']['LockerName']}}</td>
+                                                <td>{{$value['weight']['planName']}}</td>
                                                 <td>{{$value['checkIn']}}</td>
                                                 <td>{{$value['checkOut']}}</td>
-                                                <td>{{$value['dueAmount']}}</td>
+                                                <td>${{number_format($value['dueAmount'],2,'.',',')}}</td>
+
+                                                <td>{{$value['description']}}</td>
+                                                <td>{{$value['instructions']}}</td>
                                                 <td>
                                                     <span class="badge  {{$value['status'] == 'checkIn' ? 'badge-success' : 'badge-danger'}}">{{$value['status']}}</span>
                                                 </td>
-                                                <td>{{$value['created_at']}}</td>
+                                                <td>{{date('Y-m-d H:i:s',strtotime($value['created_at']))}}</td>
                                                 <td>
                                                     @if($value['status'] == 'checkIn')
                                                         <a href="{{route('updateStatus',['actionType'=>'checkOut','id'=>$value['id']])}}" class="btn btn-success btn-sm" style="margin: 2px">Check Out</a><br>
@@ -77,6 +84,10 @@
                                                 @else
                                                     <a href="#" class="btn btn-primary btn-sm" style="margin: 2px">N/A</a><br>
                                                 @endif
+{{--                                                <td>--}}
+{{--                                                    <a href="#" class="btn btn-success btn-sm editReport" id="{{$value['id']}}" style="margin: 2px">Edit</a>--}}
+{{--                                                    <a href="#" class="btn btn-primary-dark btn-sm" style="margin: 2px">View</a><br>--}}
+{{--                                                </td>--}}
                                             </tr>
                                         @endforeach
                                         </tbody>
@@ -148,7 +159,140 @@
 
                                 </div>
                             </div>
-                           <div class="col-md-6 mb-3">
+{{--                           <div class="col-md-6 mb-3">--}}
+{{--                                <label for="weight">Weight in lb</label>--}}
+{{--                                <input type="number" class="form-control" id="weight" name="weight" value="" required="">--}}
+{{--                                <div class="valid-tooltip">--}}
+
+{{--                                </div>--}}
+{{--                            </div>--}}
+                            <div class="col-md-6 mb-3">
+                                <label for="weight">Weight in lb</label>
+                                <select class="form-control" name="weight" id="weight" required="">
+                                    <option selected="" disabled="" value="">Choose...</option>
+                                    @foreach($pricing as $value)
+                                        <option value="{{$value->id}}">{{$value->planName}} ${{$value->price}}.00</option>
+                                    @endforeach
+                                </select>
+                                <div class="invalid-tooltip">
+                                    Please select a valid Type.
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="paymentStatus">Payment Status</label>
+                                <select class="form-control" id="validationTooltip04" name="paymentStatus" required="">
+                                    <option selected="" disabled="" value="">Choose...</option>
+                                    <option value="paid">Paid</option>
+                                    <option value="unpaid">Unpaid</option>
+                                </select>
+                                <div class="invalid-tooltip">
+                                    Please select a valid Status.
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="checkInTime">CheckIn Time</label>
+                                <input type="datetime-local" class="form-control" id="checkInTime" name="checkInTime" value="" required="">
+                                <div class="valid-tooltip">
+
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="CheckOut">CheckOut Time</label>
+                                <input type="datetime-local" class="form-control" id="CheckOut" name="checkOut" value="" required="">
+                                <div class="valid-tooltip">
+
+                                </div>
+                            </div>
+{{--                            <div class="col-md-6 mb-3" style="visibility: hidden">--}}
+{{--                                <label for="dueAmount">TotalDue Amount</label>--}}
+{{--                                <input type="number" class="form-control" id="dueAmount" name="dueAmount" value="0" required="">--}}
+{{--                                <div class="valid-tooltip">--}}
+
+{{--                                </div>--}}
+{{--                            </div>--}}
+
+
+                            <div class="col-md-6 mb-3"></div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="validationTextarea">Description</label>
+                                <textarea class="form-control " name="description" id="validationTextarea" required=""></textarea>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="Instructions">Instructions</label>
+                                <textarea class="form-control " name="instructions" id="Instructions" required=""></textarea>
+                            </div>
+
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+    <div class="modal updateModel" tabindex="-1" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Pet</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <form class="needs-validation" novalidate="" method="POST" action="{{route('addRecords')}}">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="form-row">
+                            <div class="col-md-6 mb-3">
+                                <label for="petType">Pet Type</label>
+                                <select class="form-control" name="petType" id="petType" required="">
+                                    <option selected="" disabled="" value="">Choose...</option>
+                                    <option value="Cat">Cat</option>
+                                    <option value="Dog">Dog</option>
+                                </select>
+                                <div class="invalid-tooltip">
+                                    Please select a valid Type.
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="lockerId">Select Available Locker</label>
+                                <select class="form-control" name="lockerId" id="lockerId" required="">
+                                    <option selected="" disabled="" value="">Choose...</option>
+
+                                    @foreach($availableLockers as $value)
+                                        <option value="{{$value['id']}}">{{$value['LockerName']}}</option>
+                                    @endforeach
+                                </select>
+                                <div class="invalid-tooltip">
+                                    Please select a valid Type.
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="petName">PetName</label>
+                                <input type="text" class="form-control" name="petName" id="petName" value="" required="">
+                                <div class="valid-tooltip">
+
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="days">Duration in Days</label>
+                                <input type="number" class="form-control" id="days" name="days" value="" required="">
+                                <div class="valid-tooltip">
+
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="age">Age</label>
+                                <input type="number" class="form-control" id="age" name="age" value="" required="">
+                                <div class="valid-tooltip">
+
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
                                 <label for="weight">Weight in lb</label>
                                 <input type="number" class="form-control" id="weight" name="weight" value="" required="">
                                 <div class="valid-tooltip">
@@ -212,16 +356,17 @@
                             </div>
 
                         </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save changes</button>
-                </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
                 </form>
 
             </div>
         </div>
     </div>
+
 @endsection
 @push('scripts')
     <script>
